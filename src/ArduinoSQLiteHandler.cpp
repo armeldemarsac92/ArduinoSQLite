@@ -70,19 +70,23 @@ void closeSQLiteConnection(sqlite3* sqliteConnection) {
   Serial.println("---- testSQLite - sqlite3_close - end ----");
 }
 
-bool createSQLTable(sqlite3* sqliteConnection, const char* tableName, const std::vector<DBColumn>& columns) {
+bool createSQLTable(sqlite3* sqliteConnection, const DBTable& table) {
   Serial.println("---- creating sql table - begin ----");
+
+  const char* tableName = table.tableName.c_str();
+
+  const std::vector<DBColumn>& cols = table.columns;
 
   std::string sqlStatement = "CREATE TABLE IF NOT EXISTS ";
   sqlStatement += tableName;
   sqlStatement += " (";
 
-  for (size_t i = 0; i < columns.size(); i++) {
-    sqlStatement += columns[i].name;
+  for (size_t i = 0; i < table.columns.size(); i++) {
+    sqlStatement += cols[i].name;
     sqlStatement += " ";
-    sqlStatement += columns[i].type;
+    sqlStatement += cols[i].type;
 
-    if (i < columns.size() - 1) {
+    if (i < cols.size() - 1) {
       sqlStatement += ", ";
     }
   }
