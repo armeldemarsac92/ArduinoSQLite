@@ -64,7 +64,7 @@ sqlite3* createOpenSQLConnection(const char* dbName) {
   return sqliteConnection;
 }
 
-bool closeSQLiteConnection(sqlite3* sqliteConnection) {
+void closeSQLiteConnection(sqlite3* sqliteConnection) {
   Serial.println("---- testSQLite - sqlite3_close - begin ----");
   sqlite3_close(sqliteConnection);
   Serial.println("---- testSQLite - sqlite3_close - end ----");

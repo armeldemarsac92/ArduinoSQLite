@@ -5,7 +5,7 @@
 struct DBColumn {
     std::string name;
     std::string type;
-    bool isPrimaryKey;
+    bool isPrimaryKey = false;
 };
 
 #endif //ARDUINOSQLITE_DBTYPES_H
