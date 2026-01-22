@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-#include "./src/ArduinoSQLite.hpp"
-#include "./test/MemoryInfo.hpp"
+#include "ArduinoSQLite.hpp"
+#include "MemoryInfo.hpp"
 
 #include <SD.h>
 

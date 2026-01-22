@@ -1,0 +1,37 @@
+{
+  "name": "ArduinoSQLite",
+  "version": "1.0.0",
+  "description": "SQLite3 library configuration for Teensy 4.1",
+  "keywords": "sqlite, database, sql, teensy",
+  "frameworks": "arduino",
+  "platforms": "teensy",
+  "build": {
+    "flags": [
+      "-D TEENSY_41_SQLITE",
+      "-DSQLITE_OS_OTHER=1",
+      "-DSQLITE_THREADSAFE=0",
+      "-DSQLITE_TEMP_STORE=3",
+      "-DSQLITE_DEFAULT_MMAP_SIZE=0",
+      "-DSQLITE_DEFAULT_MEMSTATUS=0",
+      "-DSQLITE_MAX_EXPR_DEPTH=0",
+      "-DSQLITE_DQS=0",
+      "-DSQLITE_STRICT_SUBTYPE=1",
+      "-DSQLITE_OMIT_DEPRECATED=1",
+      "-DSQLITE_OMIT_SHARED_CACHE=1",
+      "-DSQLITE_OMIT_PROGRESS_CALLBACK=1",
+      "-DSQLITE_OMIT_AUTOINIT=1",
+      "-DSQLITE_OMIT_DECLTYPE=1",
+      "-DSQLITE_OMIT_LOAD_EXTENSION=1",
+      "-DSQLITE_OMIT_UTF16=1",
+      "-DSQLITE_OMIT_WAL=1",
+      "-DHAVE_MALLOC_USABLE_SIZE=0"
+    ],
+    "libLDFMode": "deep+"
+  },
+  "dependencies": {
+    "paulstoffregen/Time": "*",
+    "SD": "https://github.com/PaulStoffregen/SD.git",
+    "SdFat": "https://github.com/PaulStoffregen/SdFat.git",
+    "SPI": "https://github.com/PaulStoffregen/SPI.git"
+  }
+}

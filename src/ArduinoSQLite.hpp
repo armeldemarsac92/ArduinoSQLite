@@ -1,5 +1,5 @@
-#ifndef TEENSY_41_SQLITE
-#define TEENSY_41_SQLITE
+#ifndef TEENSY_41_SQLITE_HPP
+#define TEENSY_41_SQLITE_HPP
 
 #include "sqlite3.h"
 
