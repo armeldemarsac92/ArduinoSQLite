@@ -4,10 +4,12 @@
 #include "MemoryInfo.hpp"
 
 #include <SD.h>
+#include <string>
+#include "dbTypes.h"
 
 namespace memInfo = halvoe::memoryInfo;
 
-const char* dbName = "test.db";
+const char* dbName;
 const char* dbJournalName = "test.db-journal";
 
 void setupSerial(long in_serialBaudrate, unsigned long in_timeoutInSeconds = 15)
@@ -50,6 +52,100 @@ void printMemoryInfo()
   Serial.printf("getUsedStackInBytes(): %d\n", memInfo::getUsedStackInBytes());
   Serial.printf("getUsedHeapInBytes(): %d\n", memInfo::getUsedHeapInBytes());
   //Serial.printf("getDynamicUsedPsramInBytes(): %d\n", memInfo::getDynamicUsedPsramInBytes()); // expensive opration
+}
+
+sqlite3* createOpenSQLConnection(const char* dbName) {
+  sqlite3* sqliteConnection;
+  Serial.println("---- testSQLite - sqlite3_open - begin ----");
+  int connectionResult = sqlite3_open(dbName, &sqliteConnection);
+  checkSQLiteError(sqliteConnection, connectionResult);
+  printMemoryInfo();
+  Serial.println("---- testSQLite - sqlite3_open - end ----");
+  return sqliteConnection;
+}
+
+bool closeSQLiteConnection(sqlite3* sqliteConnection) {
+  Serial.println("---- testSQLite - sqlite3_close - begin ----");
+  sqlite3_close(sqliteConnection);
+  Serial.println("---- testSQLite - sqlite3_close - end ----");
+}
+
+bool createSQLTable(sqlite3* sqliteConnection, const char* tableName, const std::vector<DBColumn>& columns) {
+  Serial.println("---- creating sql table - begin ----");
+
+  std::string sqlStatement = "CREATE TABLE IF NOT EXISTS ";
+  sqlStatement += tableName;
+  sqlStatement += " (";
+
+  for (size_t i = 0; i < columns.size(); i++) {
+    sqlStatement += columns[i].name;
+    sqlStatement += " ";
+    sqlStatement += columns[i].type;
+
+    if (i < columns.size() - 1) {
+      sqlStatement += ", ";
+    }
+  }
+
+  sqlStatement += ");";
+
+  Serial.print("Executing: ");
+  Serial.println(sqlStatement.c_str());
+
+  char* errMsg = nullptr;
+  int commandResult = sqlite3_exec(sqliteConnection, sqlStatement.c_str(), NULL, NULL, &errMsg);
+
+  if (commandResult != SQLITE_OK) {
+    Serial.printf("SQL Error: %s\n", errMsg);
+    sqlite3_free(errMsg);
+    Serial.println("---- failed creating sql table - end ----");
+    return false;
+  }
+
+  Serial.println("---- success creating sql table - end ----");
+  return true;
+
+}
+
+bool executeSQLTransaction(sqlite3* sqliteConnection, const std::vector<std::string>& sqlStatement) {
+  Serial.println("---- preparing sql transaction - begin ----");
+
+  char* errMsg = nullptr;
+  int commandResult = sqlite3_exec(sqliteConnection, "BEGIN TRANSACTION;", NULL, NULL, &errMsg);
+
+  if (commandResult != SQLITE_OK) {
+    Serial.printf("SQL Error: %s\n", errMsg);
+    sqlite3_free(errMsg);
+    Serial.println("---- failed preparing sql transaction - end ----");
+    return false;
+  }
+
+  for (size_t i = 0; i < sqlStatement.size(); i++) {
+    Serial.println("---- executing sql satement ----");
+
+    commandResult = sqlite3_exec(sqliteConnection, sqlStatement[i].c_str(), NULL, NULL, &errMsg);
+
+    if (commandResult != SQLITE_OK) {
+      Serial.printf("SQL Error: %s\n", errMsg);
+      sqlite3_free(errMsg);
+      Serial.println("---- failed preparing sql transaction - end ----");
+      sqlite3_exec(sqliteConnection, "ROLLBACK;", NULL, NULL, NULL);
+      return false;
+    }
+  }
+
+  commandResult = sqlite3_exec(sqliteConnection, "COMMIT;", NULL, NULL, &errMsg);
+
+  if (commandResult != SQLITE_OK) {
+    Serial.printf("SQL Error: %s\n", errMsg);
+    sqlite3_free(errMsg);
+    Serial.println("---- failed preparing sql transaction - end ----");
+    sqlite3_exec(sqliteConnection, "ROLLBACK;", NULL, NULL, NULL);
+    return false;
+  }
+
+  Serial.println("---- success executing sql transaction - end ----");
+  return true;
 }
 
 void testSQLite()
@@ -122,9 +218,11 @@ void testSQLite()
   Serial.println("---- testSQLite - sqlite3_close - end ----");
 }
 
-void setupSQLite()
+void setupSQLite(const char* dbName)
 {
   setupSerial(115200);
+
+  std::string journalPath = std::string(dbName) + "-journal";
 
   if (CrashReport)
   {
