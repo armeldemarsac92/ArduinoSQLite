@@ -4,6 +4,7 @@
 #include "MemoryInfo.hpp"
 
 #include <SD.h>
+#include <stdexcept>
 #include <string>
 #include "dbTypes.h"
 
@@ -45,6 +46,50 @@ void checkSQLiteError(sqlite3* in_db, int in_rc)
     Serial.print(": ");
     Serial.println(sqlite3_errstr(ext_rc));
   }
+}
+
+std::string buildSQLInsertStatement(const DBTable &table, const std::vector<std::string> &dataToInsert) {
+
+  int expectedColumns = 0;
+  for(const auto& col : table.columns) {
+    if (!col.isPrimaryKey) expectedColumns++;
+  }
+
+  if (expectedColumns != dataToInsert.size()) {
+    Serial.printf("Error: Table has %d insertable columns, but you provided %d values.\n", expectedColumns, dataToInsert.size());
+    return "";
+  }
+
+  std::string sql = "INSERT INTO " + table.tableName + " (";
+  std::string values = "VALUES (";
+
+  int dataIndex = 0;
+
+  for (size_t i = 0; i < table.columns.size(); i++) {
+    if (table.columns[i].isPrimaryKey) {
+      continue;
+    }
+
+    sql += table.columns[i].name;
+
+    if (table.columns[i].type.find("TEXT") != std::string::npos) {
+      values += "'" + dataToInsert[dataIndex] + "'";
+    } else {
+      values += dataToInsert[dataIndex];
+    }
+
+    bool isLast = (dataIndex == dataToInsert.size() - 1);
+    if (!isLast) {
+      sql += ", ";
+      values += ", ";
+    }
+
+    dataIndex++;
+  }
+
+  sql += ") " + values + ");";
+
+  return sql;
 }
 
 void printMemoryInfo()
