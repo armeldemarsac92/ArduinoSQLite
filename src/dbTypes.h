@@ -8,4 +8,9 @@ struct DBColumn {
     bool isPrimaryKey = false;
 };
 
+struct DBTable {
+    std::string tableName;
+    std::vector<DBColumn> columns;
+};
+
 #endif //ARDUINOSQLITE_DBTYPES_H
