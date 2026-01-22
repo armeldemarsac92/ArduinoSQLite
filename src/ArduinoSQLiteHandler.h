@@ -10,8 +10,7 @@
 #include "sqlite3.h"
 
 
-void setupSQLite(const char* databaseName);
-sqlite3* createOpenSQLite(const char* databaseName);
+sqlite3* createOpenSQLConnection(const char* databaseName);
 void closeSQLiteConnection(sqlite3* sqliteConnection);
 bool createSQLTable(sqlite3* sqliteConnection, const char* tableName, const std::vector<DBColumn>& columns);
 bool executeSQLTransaction(sqlite3* sqliteConnection, const std::vector<std::string>& sqlStatement);
