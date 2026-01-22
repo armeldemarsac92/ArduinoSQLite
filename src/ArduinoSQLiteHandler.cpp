@@ -322,4 +322,12 @@ void setupSQLite(const char* dbName)
   }
 }
 
+void setup() {
+  // ...
+}
+
+void loop() {
+  // ...
+}
+
 
