@@ -122,7 +122,7 @@ void testSQLite()
   Serial.println("---- testSQLite - sqlite3_close - end ----");
 }
 
-void setup()
+void setupSQLite()
 {
   setupSerial(115200);
 
@@ -175,8 +175,4 @@ void setup()
   }
 }
 
-void loop()
-{
-  // nothing to do here
-}
 
