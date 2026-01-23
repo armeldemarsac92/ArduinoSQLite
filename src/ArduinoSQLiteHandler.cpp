@@ -196,11 +196,8 @@ bool executeSQLTransaction(sqlite3* sqliteConnection, const std::vector<std::str
 
 
 void setupDatabase(){
-  Serial.begin(115200);
-  while (!Serial && millis() < 4000);
-
   if (CrashReport) {
-    Serial.print(CrashReport);
+    Serial.println(CrashReport);
   }
 
   if (!SD.begin(BUILTIN_SDCARD)) {
