@@ -122,58 +122,58 @@
 //   Serial.println("---- testSQLite - sqlite3_close - end ----");
 // }
 //
-// void setup()
-// {
-//   setupSerial(115200);
-//
-//   if (CrashReport)
-//   {
-//     Serial.println(CrashReport);
-//   }
-//
-//   Serial.print("SQLite Version: ");
-//   Serial.println(SQLITE_VERSION);
-//
-//   printMemoryInfo();
-//
-//   if (not SD.begin(BUILTIN_SDCARD))
-//   {
-//     Serial.println("SD.begin() failed! - Halting!");
-//     while (true) { delay(1000); }
-//   }
-//
-//   if (SD.exists(dbName)) { if (not SD.remove(dbName)) { Serial.printf("Remove %s failed!\n", dbName); } }
-//   if (SD.exists(dbJournalName)) { if (not SD.remove(dbJournalName)) { Serial.printf("Remove %s failed!\n", dbJournalName); } }
-//
-//   T41SQLite::getInstance().setLogCallback(errorLogCallback);
-//   int resultBegin = T41SQLite::getInstance().begin(&SD, false);
-//
-//   if (resultBegin == SQLITE_OK)
-//   {
-//     Serial.println("T41SQLite::getInstance().begin() succeded!");
-//     printMemoryInfo();
-//
-//     testSQLite();
-//
-//     int resultEnd = T41SQLite::getInstance().end();
-//
-//     if (resultEnd == SQLITE_OK)
-//     {
-//       Serial.println("T41SQLite::getInstance().end() succeded!");
-//     }
-//     else
-//     {
-//       Serial.print("T41SQLite::getInstance().end() failed! result code: ");
-//       Serial.println(resultEnd);
-//     }
-//
-//     printMemoryInfo();
-//   }
-//   else
-//   {
-//     Serial.println("T41SQLite::getInstance().begin() failed!");
-//   }
-// }
+void setup()
+{
+  setupSerial(115200);
+
+  if (CrashReport)
+  {
+    Serial.println(CrashReport);
+  }
+
+  Serial.print("SQLite Version: ");
+  Serial.println(SQLITE_VERSION);
+
+  printMemoryInfo();
+
+  if (not SD.begin(BUILTIN_SDCARD))
+  {
+    Serial.println("SD.begin() failed! - Halting!");
+    while (true) { delay(1000); }
+  }
+
+  if (SD.exists(dbName)) { if (not SD.remove(dbName)) { Serial.printf("Remove %s failed!\n", dbName); } }
+  if (SD.exists(dbJournalName)) { if (not SD.remove(dbJournalName)) { Serial.printf("Remove %s failed!\n", dbJournalName); } }
+
+  T41SQLite::getInstance().setLogCallback(errorLogCallback);
+  int resultBegin = T41SQLite::getInstance().begin(&SD, false);
+
+  if (resultBegin == SQLITE_OK)
+  {
+    Serial.println("T41SQLite::getInstance().begin() succeded!");
+    printMemoryInfo();
+
+    testSQLite();
+
+    int resultEnd = T41SQLite::getInstance().end();
+
+    if (resultEnd == SQLITE_OK)
+    {
+      Serial.println("T41SQLite::getInstance().end() succeded!");
+    }
+    else
+    {
+      Serial.print("T41SQLite::getInstance().end() failed! result code: ");
+      Serial.println(resultEnd);
+    }
+
+    printMemoryInfo();
+  }
+  else
+  {
+    Serial.println("T41SQLite::getInstance().begin() failed!");
+  }
+}
 //
 // void loop()
 // {
