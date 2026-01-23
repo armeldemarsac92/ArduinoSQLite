@@ -102,6 +102,12 @@ sqlite3* createOpenSQLConnection(const char* dbName) {
   int connectionResult = sqlite3_open(dbName, &sqliteConnection);
   checkSQLiteError(sqliteConnection, connectionResult);
   printMemoryInfo();
+  if (connectionResult == SQLITE_OK) {
+    Serial.println("---- testSQLite - success ----");
+  }
+  else {
+    Serial.println("---- testSQLite - failure ----");
+  }
   Serial.println("---- testSQLite - sqlite3_open - end ----");
   return sqliteConnection;
 }
@@ -140,7 +146,7 @@ bool createSQLTable(sqlite3* sqliteConnection, const DBTable& table) {
 
   char* errMsg = nullptr;
   int commandResult = sqlite3_exec(sqliteConnection, sqlStatement.c_str(), NULL, NULL, &errMsg);
-
+  checkSQLiteError(sqliteConnection, commandResult);
   if (commandResult != SQLITE_OK) {
     Serial.printf("SQL Error: %s\n", errMsg);
     sqlite3_free(errMsg);
@@ -196,6 +202,8 @@ bool executeSQLTransaction(sqlite3* sqliteConnection, const std::vector<std::str
 
 
 void setupDatabase(){
+  Serial.println("---- setupDatabase - begin ----");
+
   if (CrashReport) {
     Serial.println(CrashReport);
   }
@@ -205,8 +213,17 @@ void setupDatabase(){
     return;
   }
 
-  T41SQLite::getInstance().setLogCallback(errorLogCallback);
-  T41SQLite::getInstance().begin(&SD, false);
-}
+  Serial.println("---- setupDatabase - end ----");
 
+  T41SQLite::getInstance().setLogCallback(errorLogCallback);
+  int resultBegin = T41SQLite::getInstance().begin(&SD, false);
+
+  if (resultBegin == SQLITE_OK) {
+    Serial.println("T41SQLite::getInstance().begin() succeded!");
+    printMemoryInfo();
+  }
+  else {
+    Serial.println("T41SQLite::getInstance().begin() failed!");
+  }
+}
 
