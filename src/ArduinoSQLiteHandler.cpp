@@ -195,7 +195,7 @@ bool executeSQLTransaction(sqlite3* sqliteConnection, const std::vector<std::str
 }
 
 
-void setupDatabase(const char* dbName){
+void setupDatabase(){
   Serial.begin(115200);
   while (!Serial && millis() < 4000);
 
